@@ -8,5 +8,10 @@ export default defineConfig({
       index: "src/index.tsx",
     },
   },
-
+  output: {
+    assetPrefix: './',
+    distPath: {
+      root: "dist"
+    }
+  }
 });
