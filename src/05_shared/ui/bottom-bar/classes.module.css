@@ -1,0 +1,22 @@
+.bottom-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* background: linear-gradient(
+    to top,
+    var(--mantine-color-body) 80%,
+    rgba(1, 1, 1, 0)
+  ); */
+
+  z-index: 2;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--mantine-radius-lg) var(--mantine-radius-lg) 0  0 ;
+  background-color: var(--mantine-color-dark-6);
+  padding: 10px;
+}

@@ -1,0 +1,43 @@
+name: Сборка и публикация на GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия деплоя'
+        required: false
+        default: 'manual deploy'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install Dependencies 📦
+        run: npm ci
+        
+      - name: Extract repository name
+        id: repo-name
+        run: echo "REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 2)" >> $GITHUB_ENV
+        
+      - name: Build 🔧
+        run: npm run build
+        env:
+          NODE_ENV: production
+          REPOSITORY_NAME: ${{ env.REPO_NAME }}
+      
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true 
