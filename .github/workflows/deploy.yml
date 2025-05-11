@@ -1,44 +1,50 @@
-name: Сборка и публикация на GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Версия деплоя'
-        required: false
-        default: 'manual deploy'
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js ⚙️
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           
-      - name: Install Dependencies 📦
+      - name: Install dependencies
         run: npm ci
         
-      - name: Extract repository name
-        id: repo-name
-        run: echo "REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 2)" >> $GITHUB_ENV
-        
-      - name: Build 🔧
+      - name: Build project
         run: npm run build
         env:
           NODE_ENV: production
-          REPOSITORY_NAME: ${{ env.REPO_NAME }}
-      
-      - name: Deploy to GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          folder: dist
-          branch: gh-pages
-          clean: true 
-          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: 'dist'
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

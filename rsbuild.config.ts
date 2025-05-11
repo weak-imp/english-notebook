@@ -8,11 +8,5 @@ export default defineConfig({
       index: "src/index.tsx",
     },
   },
-  output: {
-    // Используем переменную окружения для определения базового пути
-    // В GitHub Actions можно использовать имя репозитория
-    assetPrefix: process.env.NODE_ENV === 'production'
-      ? `/${process.env.REPOSITORY_NAME || 'english-notebook'}/`
-      : '/',
-  },
+
 });
